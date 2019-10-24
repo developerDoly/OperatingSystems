@@ -4,73 +4,91 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <string.h>
-#include <string>
+#include <std::string.h>
+#include <std::string>
 
-int main()
-{
-	
-	
-    //	Create a socket
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock == -1)
-    {
-        return 1;
+class Client{
+
+    //default constructor
+    Client(char[] name, char[] ipAddress, int port) {
+        std::string c_name = name;
+
+
+
+        std::cout << "Client " << c_name << " has been created.\n";
+    }
+    
+    ~Client(){
+        std::cout << "Client " << c_name << " has been destroyed.\n";
     }
 
-    //	Create a hint structure for the server we're connecting with
-    int port = 9800;
-    string ipAddress = "10.35.195.46";
+    int createSocket(char[] ipAddress, int port) {
+        // Create a socket
+        int listening = socket(AF_INET, SOCK_STREAM, 0);
+        if (listening == -1) {
+            cerr << "Can't create a socket! Quitting" << endl;
+            return -1;
+        }
 
-    sockaddr_in hint;
-    hint.sin_family = AF_INET;
-    hint.sin_port = htons(port);
-    inet_pton(AF_INET, ipAddress.c_str(), &hint.sin_addr);
+        //	Create a hint structure for the server we're connecting with
+        int port = 9800;
+        std::string ipAddress = "10.35.195.46";
 
-    //	Connect to the server on the socket
-    int connectRes = connect(sock, (sockaddr*)&hint, sizeof(hint));
-    if (connectRes == -1)
-    {
-        return 1;
+        sockaddr_in hint;
+        hint.sin_family = AF_INET;
+        hint.sin_port = htons(port);
+        inet_pton(AF_INET, ipAddress.c_str(), &hint.sin_addr);
+
+        //	Connect to the server on the socket
+        int connectRes = connect(sock, (sockaddr * ) & hint, sizeof(hint));
+        if (connectRes == -1) {
+            return 1;
+        }
     }
+    
+    int sendStuff(){
+        char buf[4096];
+        std::string userInput;
 
-    //	While loop:
-    char buf[4096];
-    string userInput;
-
-
-    do {
         //		Enter lines of text
-        cout << "> ";
-        getline(cin, userInput);
+        std::cout << "> ";
+        getline(std::cin, userInput);
 
         //		Send to server
         int sendRes = send(sock, userInput.c_str(), userInput.size() + 1, 0);
         if (sendRes == -1)
         {
-            cout << "Could not send to server! Whoops!\r\n";
+            std::cout << "Could not send to server! Whoops!\r\n";
             continue;
         }
-
+        
+        return 0;
+    }
+    
+    
+    int waitForResponse(){
         //		Wait for response
         memset(buf, 0, 4096);
         int bytesReceived = recv(sock, buf, 4096, 0);
         if (bytesReceived == -1)
         {
-            cout << "There was an error getting response from server\r\n";
+            std::cout << "There was an error getting response from server\r\n";
         }
         else
         {
             //		Display response
-            cout << "SERVER> " << string(buf, bytesReceived) << "\r\n";
+            std::cout << "SERVER> " << std::string(buf, bytesReceived) << "\r\n";
         }
-    } while(true);
+        return 0;
+    }
+    
+    int closeSocket(){
+        close(sock);
+        
+        return 0;
+    }
 
-    //	Close the socket
-    close(sock);
-
-    return 0;
-}
+};
 
 void readInFile(){
 	ifstream is("./../../../../../../../../../../../../tmp/1G");

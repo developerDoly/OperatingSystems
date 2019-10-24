@@ -27,12 +27,6 @@ class Server {
     }
 
     int createSocket(char[] ipAddress, int port) {
-
-    }
-
-
-
-    int main() {
         // Create a socket
         int listening = socket(AF_INET, SOCK_STREAM, 0);
         if (listening == -1) {
@@ -50,7 +44,6 @@ class Server {
 
         // Tell Winsock the socket is for listening
         listen(listening, SOMAXCONN);
-
         // Wait for a connection
         sockaddr_in client;
         socklen_t clientSize = sizeof(client);
@@ -73,34 +66,34 @@ class Server {
         // Close listening socket
         close(listening);
 
-        // While loop: accept and echo message back to client
+        return 0;
+    }
+
+    int listen(){
         char buf[4096];
 
-        while (true) {
-            memset(buf, 0, 4096);
+        memset(buf, 0, 4096);
 
-            // Wait for client to send data
-            int bytesReceived = recv(clientSocket, buf, 4096, 0);
-            if (bytesReceived == -1) {
-                cerr << "Error in recv(). Quitting" << endl;
-                break;
-            }
-
-            if (bytesReceived == 0) {
-                cout << "Client disconnected " << endl;
-                break;
-            }
-
-            cout << string(buf, 0, bytesReceived) << endl;
-
-            // Echo message back to client
-            send(clientSocket, buf, bytesReceived + 1, 0);
+        // Wait for client to send data
+        int bytesReceived = recv(clientSocket, buf, 4096, 0);
+        if (bytesReceived == -1) {
+            cerr << "Error in recv(). Quitting" << endl;
+            break;
         }
+
+        if (bytesReceived == 0) {
+            cout << "Client disconnected " << endl;
+            break;
+        }
+
+        cout << string(buf, 0, bytesReceived) << endl;
+
+        // Echo message back to client
+        send(clientSocket, buf, bytesReceived + 1, 0);
 
         // Close the socket
         close(clientSocket);
 
         return 0;
     }
-
 };
