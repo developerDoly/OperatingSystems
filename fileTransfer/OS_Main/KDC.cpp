@@ -30,6 +30,31 @@ char* ipAddressOfThing0 = "10.35.195.46";
 
 
 
+//int main(){
+ //   Server kdc = new Server();
+//}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+//below is just for testing
+
 int main(){
-    Server kdc = new Server();
+	std::string ipAddress0 = "10.35.195.46";
+	std::string ipAddress1 = "10.35.195.47";
+	std::string ipAddress2 = "10.35.195.22";
+	
+	int port = 9800;
+	
+	FileReader fileReader = new FileReader("test.txt", "output.txt");
+	
+	std::string textToBeSent = fileReader.processFile();
+	
+	Connection connection = new Connection("Thing1", "10.35.195.47", port);
+	
+	connection.createSocket("10.35.195.46", port);
+	
+	connection.sendStuff(textToBeSent);
+	
+	
 }
